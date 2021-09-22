@@ -62,32 +62,36 @@ def led(color, value):
 
 
 def read_sensehat():
-    temp_now = float(f"{sense.temperature:5.1f}")
-    pres_now = float(f"{sense.pressure:5.1f}")
-    humi_now = float(f"{sense.humidity:5.1f}")
+    temp_now.value = f"{sense.temperature:5.1f}"
+    pres_now.value = f"{sense.pressure:5.1f}"
+    humi_now.value = f"{sense.humidity:5.1f}"
+    
+    temperature_now = float(f"{sense.temperature:5.1f}")
+    pressure_now = float(f"{sense.pressure:5.1f}")
+    humidity_now = float(f"{sense.humidity:5.1f}")
     
     if temp_ap_input.value == "":
         led(1,0)
     else:
-        if temp_now < (float(temp_ap_input.value)):
+        if temperature_now < (float(temp_ap_input.value)):
             led(0,0)
-        elif temp_now >= (float(temp_ap_input.value)):
+        elif temperature_now >= (float(temp_ap_input.value)):
             led(1,0)
     
     if pres_ap_input.value == "":
         led(1,1)
     else:
-        if pres_now < (float(pres_ap_input.value)):
+        if pressure_now < (float(pres_ap_input.value)):
             led(0,1)
-        elif pres_now >= (float(pres_ap_input.value)):
+        elif pressure_now >= (float(pres_ap_input.value)):
             led(1,1)
     
     if humi_ap_input.value == "":
         led(1,2)
     else:
-        if humi_now < (float(humi_ap_input.value)):
+        if humidity_now < (float(humi_ap_input.value)):
             led(0,2)
-        elif humi_now >= (float(humi_ap_input.value)):
+        elif humidity_now >= (float(humi_ap_input.value)):
             led(1,2)
         led(2,2)
     
