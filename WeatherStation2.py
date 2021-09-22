@@ -24,7 +24,7 @@ def led(color, value):
                             sense.set_pixel(x, y, rgb)
                         else:
                             sense.set_pixel(x, y, rgb2)
-                sleep(0.5)
+                sleep(0.2)
             elif value == 1:
                 for x in range(3, 5):
                     for y in range(8):
@@ -32,7 +32,7 @@ def led(color, value):
                             sense.set_pixel(x, y, rgb)
                         else:
                             sense.set_pixel(x, y, rgb2)
-                sleep(0.5)
+                sleep(0.2)
             elif value == 2:
                 for x in range(6, 8):
                     for y in range(8):
@@ -40,26 +40,25 @@ def led(color, value):
                             sense.set_pixel(x, y, rgb)
                         else:
                             sense.set_pixel(x, y, rgb2)
-                sleep(0.5)
+                sleep(0.2)
             i += 1
 
     
     elif color == 1:
         rgb = (0, 255, 0)
-        rgb2 = (0, 255, 0)
     
-    if value == 0:
-        for x in range(2):
-            for y in range(8):
-                sense.set_pixel(x, y, rgb)        
-    elif value == 1:
-        for x in range(3, 5):
-            for y in range(8):
-                sense.set_pixel(x, y, rgb)
-    elif value == 2:
-        for x in range(6, 8):
-            for y in range(8):
-                sense.set_pixel(x, y, rgb)
+        if value == 0:
+            for x in range(2):
+                for y in range(8):
+                    sense.set_pixel(x, y, rgb)        
+        elif value == 1:
+            for x in range(3, 5):
+                for y in range(8):
+                    sense.set_pixel(x, y, rgb)
+        elif value == 2:
+            for x in range(6, 8):
+                for y in range(8):
+                    sense.set_pixel(x, y, rgb)
 
 
 def read_sensehat():
