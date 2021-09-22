@@ -145,16 +145,3 @@ quit = PushButton(lower_box, text = "Quit program", width = "fill", grid = [0,1]
      
 app.repeat(2000, read_sensehat)
 app.display()
-
-
-#Quit function
-def quit():
-    app.cancel(read_sensehat)
-    app.disable()
-    app.destroy()
-        
-        
-
-        
-
-
