@@ -1,11 +1,10 @@
 #Imports
 from guizero import App, Text, TextBox, Box, PushButton
 from sense_emu import SenseHat
-from time import sleep
-
 
 #global variable
 sense = SenseHat()
+valuelist = []
 
 #Clearing SenseHat's led matrix
 sense.clear()
@@ -38,50 +37,48 @@ def led(ledcolor, value):
         
 
 
-def read_sensehat():
+def read_sensehat(valuelist):
+    valuelist = valuelist
+    valuelist_sorted = []
     #temperature
-    value_temp = f"{sense.temperature:5.1f}" #value_temp.VALUE removed
     
-    try:
-        message_temp = float(message_temp.value)
-        value_temp = float(value_temp)
-    except:
+    temp_now = f"{sense.temperature:5.1f}"
+    pres_now = f"{sense.pressure:5.1f}"
+    humi_now = f"{sense.humidity:5.1f}"
+    valuelist.append(temp_now)
+    valuelist.append(pres_now)
+    valuelist.append(humi_now)
+    for value in valuelist:
+        try:
+            value = float(value)
+        except:
+            value = None
+        valuelist_sorted.append(value)
+    
+    temp_ap, pres_ap, humi_ap, temp_now, pres_now, humi_now = valuelist_sorted
+    
+    if temp_ap >= temp_now:
+        led(2,1)
+    elif temp_ap < temp_now:
+        led(3,1)
+    elif temp_ap == None:
         led(1,1)
-    else:
-        if message_temp >= value_temp:
-            led(2,1)
-        else:
-            led(3,1)
     
-    #pressure
-    value_pres = f"{sense.pressure:5.1f}"
-    
-    try:
-        message_pres = float(message_pres.value)
-        value_pres = float(value_pres)
-    except:
+    if pres_ap >= pres_now:
+        led(2,2)
+    elif pres_ap < pres_now:
+        led(3,2)
+    elif pres_ap == None:
         led(1,2)
-    else:
-        if message_pres >= value_pres:
-            led(2,2)
-        else:
-            led(3,2)
-    
-    #humidity
-    value_humi = f"{sense.humidity:5.1f}"
-    
-    try:
-        message_humi = float(message_humi.value)
-        value_humi = float(value_humi)
-    except:
+        
+    if humi_ap >= humi_now:
+        led(2,3)
+    elif humi_ap < humi_now:
+        led(3,3)
+    elif humi_ap == None:
         led(1,3)
-    else:
-        if message_humi >= value_humi:
-            led(2,3)
-        else:
-            led(3,3) 
-
-
+    
+    
 #Application
 class application:
     app = App(title = "SenseHat WeatherStation")
@@ -90,12 +87,19 @@ class application:
     widget_title = Text(app, text = "WeatherStation UI", size = 30, color = "black")
     empty_line1 = Text(app, text = "")
     message_temp = Text(app, text = "Please give alarm point for temperature on SenseHat (-30 - +105c)")
-    temp_alarmpoint = TextBox(app)
+    temp_alarmpoint = TextBox(app, text = "23.0")
     message_pres = Text(app, text = "Please give alarm point for pressure on SenseHat (260 - 1260mbar)")
-    pres_alarmpoint = TextBox(app)
+    pres_alarmpoint = TextBox(app, text = "160")
     message_humi = Text(app, text = "Please give alarm point for humidity on SenseHat (0 - 100%)")
-    humi_alarmpoint = TextBox(app)
+    humi_alarmpoint = TextBox(app, text = "40")
     empty_line2 = Text(app, text = "")
+    
+    temp_ap = temp_alarmpoint.value
+    pres_ap = pres_alarmpoint.value
+    humi_ap = humi_alarmpoint.value
+    valuelist.append(temp_ap)
+    valuelist.append(pres_ap)
+    valuelist.append(humi_ap)
 
     #Current values
     value_info_temp = Text(app, text = "Temperature now")
@@ -121,7 +125,7 @@ class application:
     #Button for quitting program
     quit = PushButton(app, text = "Quit program", command = quit)
     
-    app.repeat(1000, read_sensehat)
+    app.repeat(1000, read_sensehat(valuelist))
     app.display()
 
 
