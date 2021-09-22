@@ -7,6 +7,66 @@ sense = SenseHat()
 
 #clear SenseHat's led matrix
 sense.clear()
+        
+
+def led(color, value):
+    if color == 0:
+        rgb = (255, 0, 0)
+        rgb2 = (255, 255, 255)
+    elif color == 1:
+        rgb = (0, 255, 0)
+        rgb2 = (0, 255, 0)
+    
+    if value == 0:
+        for x in range(2):
+            for y in range(8):
+                sense.set_pixel(x, y, rgb)        
+    elif value == 1:
+        for x in range(3, 5):
+            for y in range(8):
+                sense.set_pixel(x, y, rgb)
+    elif value == 2:
+        for x in range(6, 8):
+            for y in range(8):
+                sense.set_pixel(x, y, rgb)
+
+
+def read_sensehat():
+    temp_now = float(f"{sense.temperature:5.1f}")
+    pres_now = float(f"{sense.pressure:5.1f}")
+    humi_now = float(f"{sense.humidity:5.1f}")
+    
+    if temp_ap_input.value == "":
+        led(1,0)
+    else:
+        if temp_now < (float(temp_ap_input.value)):
+            led(0,0)
+        elif temp_nov >= (float(temp_ap_input.value)):
+            led(1,0)
+    
+    if pres_ap_input.value == "":
+        led(1,1)
+    else:
+        if pres_now < (float(pres_ap_input.value)):
+            led(0,1)
+        elif pres_now >= (float(pres_ap_input.value)):
+            led(1,1)
+    
+    if humi_ap_input.value == "":
+        led(1,2)
+    else:
+        if humi_now < (float(humi_ap_input.value)):
+            led(0,2)
+        elif humi_now >= (float(humi_ap_input.value)):
+            led(1,2)
+        led(2,2)
+    
+
+def quit():
+    app.cancel(read_sensehat)
+    app.disable()
+    app.destroy()
+
 
 app = App(title = "SenseHat WeatherStation", layout = "grid")
 
@@ -55,66 +115,7 @@ def quit():
     app.destroy()
         
         
-def led(color, value):
-    if color == red:
-        rgb = (255, 0, 0)
-        rgb2 = (255, 255, 255)
-    elif color == green:
-        rgb = (0, 255, 0)
-        rgb2 = (0, 255, 0)
-    
-    if value == temp:
-        for x in range(2):
-            for y in range(8):
-                sense.set_pixel(x, y, rgb)
-        
-    elif value == pres:
-        for x in range(3, 5):
-            for y in range(8):
-                sense.set_pixel(x, y, rgb)
-    elif value == humi:
-        for x in range(6, 8):
-            for y in range(8):
-                sense.set_pixel(x, y, rgb)
+
         
 
-def read_sensehat():
-    temp_now = float(f"{sense.temperature:5.1f}")
-    pres_now = float(f"{sense.pressure:5.1f}")
-    humi_now = float(f"{sense.humidity:5.1f}")
-    
-    if temp_ap_input.value == "":
-        led(green, temp)
-    else:
-        if temp_now < (float(temp_ap_input.value)):
-            led(red,temp)
-        elif temp_nov >= (float(temp_ap_input.value)):
-            led(green, temp)
-    
-    if pres_ap_input.value == "":
-        led(green, pres)
-    else:
-        if pres_now < (float(pres_ap_input.value)):
-            led(red, pres)
-        elif pres_now >= (float(pres_ap_input.value)):
-            led(green, pres)
-    
-    if humi_ap_input.value == "":
-        led(green, humi)
-    else:
-        if humi_now < (float(humi_ap_input.value)):
-            led(red, humi)
-        elif humi_now >= (float(humi_ap_input.value)):
-            led(green, humi)
-        led(2,2)
-    if pres_ap < pres_now:
-        led(3,2)
-    elif pres_ap == None:
-        led(1,2)
-        
-    if humi_ap >= humi_now:
-        led(2,3)
-    elif humi_ap < humi_now:
-        led(3,3)
-    elif humi_ap == None:
-        led(1,3)
+
