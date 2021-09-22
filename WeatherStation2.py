@@ -1,6 +1,7 @@
 #imports
 from sense_emu import SenseHat
 from guizero import App, Box, Text, TextBox, PushButton
+from time import sleep
 
 #variables
 sense = SenseHat()
@@ -8,11 +9,41 @@ sense = SenseHat()
 #clear SenseHat's led matrix
 sense.clear()
         
-
+        
+#Functions
 def led(color, value):
     if color == 0:
         rgb = (255, 0, 0)
         rgb2 = (255, 255, 255)
+        i = 0
+        while i < 5:
+            if value == 0:
+                for x in range(2):
+                    for y in range(8):
+                        if i % 2 == 0:
+                            sense.set_pixel(x, y, rgb)
+                        else:
+                            sense.set_pixel(x, y, rgb2)
+                sleep(0.5)
+            elif value == 1:
+                for x in range(3, 5):
+                    for y in range(8):
+                        if i % 2 == 0:
+                            sense.set_pixel(x, y, rgb)
+                        else:
+                            sense.set_pixel(x, y, rgb2)
+                sleep(0.5)
+            elif value == 2:
+                for x in range(6, 8):
+                    for y in range(8):
+                        if i % 2 == 0:
+                            sense.set_pixel(x, y, rgb)
+                        else:
+                            sense.set_pixel(x, y, rgb2)
+                sleep(0.5)
+            i += 1
+
+    
     elif color == 1:
         rgb = (0, 255, 0)
         rgb2 = (0, 255, 0)
@@ -41,7 +72,7 @@ def read_sensehat():
     else:
         if temp_now < (float(temp_ap_input.value)):
             led(0,0)
-        elif temp_nov >= (float(temp_ap_input.value)):
+        elif temp_now >= (float(temp_ap_input.value)):
             led(1,0)
     
     if pres_ap_input.value == "":
@@ -64,10 +95,14 @@ def read_sensehat():
 
 def quit():
     app.cancel(read_sensehat)
+    sense.clear()
+    sense.show_message("Program stopped")
+    
     app.disable()
     app.destroy()
 
 
+#Main Program
 app = App(title = "SenseHat WeatherStation", layout = "grid")
 
 upper_box = Box(app, grid = [0,0,1,3])
@@ -109,6 +144,7 @@ app.repeat(5000, read_sensehat)
 app.display()
 
 
+#Quit function
 def quit():
     app.cancel(read_sensehat)
     app.disable()
