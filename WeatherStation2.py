@@ -45,12 +45,12 @@ lower_box = Box(app, grid = [0,16,1,2])
 emptyline5 = Text(lower_box, text = "", grid = [0,7])
 quit = PushButton(lower_box, text = "Quit program", width = "fill", grid = [0,1], command = quit)
      
-app.repeat(5000)
+app.repeat(5000, read_sensehat)
 app.display()
 
 
 def quit():
-    #app.cancel(read_sensehat())
+    app.cancel(read_sensehat)
     app.disable()
     app.destroy()
         
@@ -79,20 +79,35 @@ def led(color, value):
         
 
 def read_sensehat():
-    temp_now = f"{sense.temperature:5.1f}"
-    pres_now = f"{sense.pressure:5.1f}"
-    humi_now = f"{sense.humidity:5.1f}"
+    temp_now = float(f"{sense.temperature:5.1f}")
+    pres_now = float(f"{sense.pressure:5.1f}")
+    humi_now = float(f"{sense.humidity:5.1f}")
     
-    if temp_ap >= temp_now:
-        led(2,1)
-    elif temp_ap < temp_now:
-        led(3,1)
-    elif temp_ap == None:
-        led(1,1)
+    if temp_ap_input.value == "":
+        led(green, temp)
+    else:
+        if temp_now < (float(temp_ap_input.value)):
+            led(red,temp)
+        elif temp_nov >= (float(temp_ap_input.value)):
+            led(green, temp)
     
-    if pres_ap >= pres_now:
+    if pres_ap_input.value == "":
+        led(green, pres)
+    else:
+        if pres_now < (float(pres_ap_input.value)):
+            led(red, pres)
+        elif pres_now >= (float(pres_ap_input.value)):
+            led(green, pres)
+    
+    if humi_ap_input.value == "":
+        led(green, humi)
+    else:
+        if humi_now < (float(humi_ap_input.value)):
+            led(red, humi)
+        elif humi_now >= (float(humi_ap_input.value)):
+            led(green, humi)
         led(2,2)
-    elif pres_ap < pres_now:
+    if pres_ap < pres_now:
         led(3,2)
     elif pres_ap == None:
         led(1,2)
