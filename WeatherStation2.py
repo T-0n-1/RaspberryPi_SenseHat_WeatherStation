@@ -139,7 +139,7 @@ lower_box = Box(app, grid = [0,16,1,2])
 emptyline5 = Text(lower_box, text = "", grid = [0,7])
 quit = PushButton(lower_box, text = "Quit program", width = "fill", grid = [0,1], command = quit)
      
-app.repeat(5000, read_sensehat)
+app.repeat(2000, read_sensehat)
 app.display()
 
 
