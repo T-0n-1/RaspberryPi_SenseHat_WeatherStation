@@ -19,7 +19,7 @@ class application:
         self.app.repeat(1000, self.read_sensehat)
         
         self.app.display()
-        
+
     def read_sensehat(self):
         self.text_temperature.value = f"{self.sensehat.temperature:5.2f}"
         
