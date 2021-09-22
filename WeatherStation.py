@@ -1,5 +1,5 @@
 #Imports
-from guizero import App, Text, TextBox, Box, PushButton
+from guizero import App, Text, TextBox, PushButton
 from sense_emu import SenseHat
 
 #global variable
@@ -81,7 +81,7 @@ def read_sensehat(valuelist):
     
 #Application
 class application:
-    app = App(title = "SenseHat WeatherStation")
+    app = App(title = "SenseHat WeatherStation", layout = "auto")
 
     #Input boxes for alarm points
     widget_title = Text(app, text = "WeatherStation UI", size = 30, color = "black")
@@ -118,14 +118,14 @@ class application:
     Led columns 6-7 are assigned to humidity.
 
     Green means value is at alarm point or under it
-    and red means value is alarm point.
+    and red means value is over alarm point.
     Blue means that there is no alarm point given.""")
     empty_line4 = Text(app, text = "")
 
     #Button for quitting program
     quit = PushButton(app, text = "Quit program", command = quit)
     
-    app.repeat(1000, read_sensehat(valuelist))
+    app.repeat(5000, read_sensehat(valuelist))
     app.display()
 
 
