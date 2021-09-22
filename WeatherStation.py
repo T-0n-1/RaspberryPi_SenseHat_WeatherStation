@@ -84,15 +84,15 @@ class application:
     app = App(title = "SenseHat WeatherStation", layout = "auto")
 
     #Input boxes for alarm points
-    widget_title = Text(app, text = "WeatherStation UI", size = 30, color = "black")
-    empty_line1 = Text(app, text = "")
-    message_temp = Text(app, text = "Please give alarm point for temperature on SenseHat (-30 - +105c)")
-    temp_alarmpoint = TextBox(app, text = "23.0")
-    message_pres = Text(app, text = "Please give alarm point for pressure on SenseHat (260 - 1260mbar)")
-    pres_alarmpoint = TextBox(app, text = "160")
-    message_humi = Text(app, text = "Please give alarm point for humidity on SenseHat (0 - 100%)")
-    humi_alarmpoint = TextBox(app, text = "40")
-    empty_line2 = Text(app, text = "")
+    widget_title = Text(app, text = "WeatherStation UI", size = 30, color = "black", height = "fill")
+    empty_line1 = Text(app, text = "", height = "fill")
+    message_temp = Text(app, text = "Please give alarm point for temperature on SenseHat (-30 - +105c)", height = "fill")
+    temp_alarmpoint = TextBox(app, text = "23.0", height = "fill")
+    message_pres = Text(app, text = "Please give alarm point for pressure on SenseHat (260 - 1260mbar)", height = "fill")
+    pres_alarmpoint = TextBox(app, text = "160", height = "fill")
+    message_humi = Text(app, text = "Please give alarm point for humidity on SenseHat (0 - 100%)", height = "fill")
+    humi_alarmpoint = TextBox(app, text = "40", height = "fill")
+    empty_line2 = Text(app, text = "", height = "fill")
     
     temp_ap = temp_alarmpoint.value
     pres_ap = pres_alarmpoint.value
@@ -102,16 +102,16 @@ class application:
     valuelist.append(humi_ap)
 
     #Current values
-    value_info_temp = Text(app, text = "Temperature now")
-    value_temp = Text(app, text = f"{sense.temperature:5.1f}", size = 20)
-    value_info_pres = Text(app, text = "Pressure now")
-    value_pres = Text(app, text = f"{sense.pressure:5.1f}", size = 20)
-    value_info_humi = Text(app, text = "Humidity now")
-    value_humi = Text(app, text = f"{sense.humidity:5.1f}", size = 20)
-    empty_line3 = Text(app, text = "")
+    value_info_temp = Text(app, text = "Temperature now", height = "fill")
+    value_temp = Text(app, text = f"{sense.temperature:5.1f}", size = 20, height = "fill")
+    value_info_pres = Text(app, text = "Pressure now", height = "fill")
+    value_pres = Text(app, text = f"{sense.pressure:5.1f}", size = 20, height = "fill")
+    value_info_humi = Text(app, text = "Humidity now", height = "fill")
+    value_humi = Text(app, text = f"{sense.humidity:5.1f}", size = 20, height = "fill")
+    empty_line3 = Text(app, text = "", height = "fill")
 
     #Info for SenseHat's led matrix
-    info_title = Text(app, text = "Info about SenseHat leds", size = 18)
+    info_title = Text(app, text = "Info about SenseHat leds", size = 18, height = "fill")
     info = Text(app, text = """
     Led columns 0-1 are assigned to temperature.
     Led columns 3-4 are assigned to pressure.
@@ -119,17 +119,18 @@ class application:
 
     Green means value is at alarm point or under it
     and red means value is over alarm point.
-    Blue means that there is no alarm point given.""")
-    empty_line4 = Text(app, text = "")
+    Blue means that there is no alarm point given.""", height = "fill")
+    empty_line4 = Text(app, text = "", height = "fill")
 
     #Button for quitting program
-    quit = PushButton(app, text = "Quit program", command = quit)
+    quit = PushButton(app, text = "Quit program", height = "fill", command = quit)
     
     app.repeat(5000, read_sensehat(valuelist))
     app.display()
 
 
     def quit():
+        app.cancel(read_sensehat())
         app.disable()
         app.destroy()
     
