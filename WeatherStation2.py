@@ -44,4 +44,62 @@ emptyline4 = Text(middle_box, text = "", grid = [0,7])
 lower_box = Box(app, grid = [0,16,1,2])
 emptyline5 = Text(lower_box, text = "", grid = [0,7])
 quit = PushButton(lower_box, text = "Quit program", width = "fill", grid = [0,1], command = quit)
-          
+     
+app.repeat(5000)
+app.display()
+
+
+def quit():
+    #app.cancel(read_sensehat())
+    app.disable()
+    app.destroy()
+        
+        
+def led(color, value):
+    if color == red:
+        rgb = (255, 0, 0)
+        rgb2 = (255, 255, 255)
+    elif color == green:
+        rgb = (0, 255, 0)
+        rgb2 = (0, 255, 0)
+    
+    if value == temp:
+        for x in range(2):
+            for y in range(8):
+                sense.set_pixel(x, y, rgb)
+        
+    elif value == pres:
+        for x in range(3, 5):
+            for y in range(8):
+                sense.set_pixel(x, y, rgb)
+    elif value == humi:
+        for x in range(6, 8):
+            for y in range(8):
+                sense.set_pixel(x, y, rgb)
+        
+
+def read_sensehat():
+    temp_now = f"{sense.temperature:5.1f}"
+    pres_now = f"{sense.pressure:5.1f}"
+    humi_now = f"{sense.humidity:5.1f}"
+    
+    if temp_ap >= temp_now:
+        led(2,1)
+    elif temp_ap < temp_now:
+        led(3,1)
+    elif temp_ap == None:
+        led(1,1)
+    
+    if pres_ap >= pres_now:
+        led(2,2)
+    elif pres_ap < pres_now:
+        led(3,2)
+    elif pres_ap == None:
+        led(1,2)
+        
+    if humi_ap >= humi_now:
+        led(2,3)
+    elif humi_ap < humi_now:
+        led(3,3)
+    elif humi_ap == None:
+        led(1,3)
