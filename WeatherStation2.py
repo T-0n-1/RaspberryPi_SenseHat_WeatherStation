@@ -99,7 +99,7 @@ async def read_sensehat():
     else:
         if pressure_now < (float(pres_ap_input.value)):
             task_pres = create_task(led(0,1))
-            await sleep(0.5)
+            await sleep(0.7)
         elif pressure_now >= (float(pres_ap_input.value)):
             task_pres = create_task(led(1,1))
             await sleep(0.5)
@@ -110,7 +110,7 @@ async def read_sensehat():
     else:
         if humidity_now < (float(humi_ap_input.value)):
             task_humi = create_task(led(0,2))
-            await sleep(0.5)
+            await sleep(0.9)
         elif humidity_now >= (float(humi_ap_input.value)):
             task_humi = create_task(led(1,2))
             await sleep(0.5)
