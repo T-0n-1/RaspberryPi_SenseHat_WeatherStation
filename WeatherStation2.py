@@ -115,6 +115,14 @@ async def read_sensehat():
             task_humi = create_task(led(1,2))
             await sleep(0.5)
     
+    if sense.stick.get_events():
+        app.cancel(main)
+        sense.clear()
+        sense.show_message("Program stopped")
+    
+        app.disable()
+        app.destroy()
+
 
 #Lopetetaan ohjelma ilmoittamalla se myös SenseHatin ledeillä.
 def quit():
