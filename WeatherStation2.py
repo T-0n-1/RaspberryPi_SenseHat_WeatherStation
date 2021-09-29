@@ -80,17 +80,31 @@ async def led(color, value):
 
 #Lähetetään tiedot Azuren IoTHubiin
 async def send_transmission(temp, pres, humi):
+    if temp_ap_input.value != "":
+        temp_ap = float(temp_ap_input.value)
+    else:
+        temp_ap = None
+    if pres_ap_input.value != "":
+        pres_ap = float(pres_ap_input.value)
+    else:
+        pres_ap = None
+    if humi_ap_input.value != "":
+        humi_ap = float(humi_ap_input.value)
+    else:
+        humi_ap = None
+    
     timestamp = datetime.now()
     timestamp = timestamp.strftime("%d.%m.%Y - %H:%M:%S")
+    
     msg = json.dumps(\
         {
          'DeviceID': auth.deviceid,
          'Temperature': temp,
-         'Temperature_alarmpoint': temp_ap_input.value,
+         'Temperature_alarmpoint': temp_ap,
          'Pressure': pres,
-         'Pressure_alarmpoint': pres_ap_input.value,
+         'Pressure_alarmpoint': pres_ap,
          'Humidity': humi,
-         'Humidity_alarmpoint': humi_ap_input.value,
+         'Humidity_alarmpoint': humi_ap,
          'Timestamp': timestamp
         }
         )
@@ -152,6 +166,7 @@ async def read_sensehat():
     
         app.disable()
         app.destroy()
+        connected_device.disconnect()
 
 
 #Lopetetaan ohjelma ilmoittamalla se myös SenseHatin ledeillä.
@@ -162,6 +177,7 @@ def quit():
     
     app.disable()
     app.destroy()
+    connected_device.disconnect()
 
 
 #Main GUIZERO Program - Pääohjelmasilmukka käyttöliittymän rakentamiseen/piirtämiseen
@@ -179,7 +195,6 @@ temp_box_label = Text(temp_box, text = "TEMPERATURE", grid = [0,0])
 temp_now = Text(temp_box, text = f"now: {sense.temperature:5.1f}", grid =[0,1], align = "left")
 temp_ap_text = Text(temp_box, text = "Alarmpoint: ", grid = [0,2], align = "left")
 temp_ap_input = TextBox(temp_box, grid = [1,2,1,1], align = "left")
-temp_ap = temp_ap_input.value
 
 emptyline2 = Text(middle_box, text = "", grid = [0,3])
 
