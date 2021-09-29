@@ -11,10 +11,16 @@ sense.clear()
         
         
 #Functions
+#Käynnistetään asynkroninen funktio read_sensehat
 def main():
     run(read_sensehat())
 
 
+#Asynkroninen funktio, jolla vilkutetaan SenseHatin ledejä mikäli arvo tippuu annetun
+#hälytysarvon alle. Ensimmäiset kaksi saraketta on varattu lämpötilalle, seuraavat kaksi
+#ilman paineelle ja viimeiset kaksi ilmankosteudelle. Vihreä väri kertoo arvon olevan
+#yli hälytysarvon ja puna-valkoinen vilkutus arvon menneen hälytysarvon alle.
+#Taskeilla mahdollistettu asynkroninen ledien vilkutus.
 async def led(color, value):
     if color == 0:
         rgb = (255, 0, 0)
@@ -65,6 +71,8 @@ async def led(color, value):
                     sense.set_pixel(x, y, rgb)
 
 
+#Luetaan arvot SenseHatilta, kirjoitetaan sen hetkinen arvo käyttöliittymään ja
+#ajetaan asynkroninen led funktio arvo versus hälytysarvo vertailun perusteella.
 async def read_sensehat():
     temp_now.value = f"now: {sense.temperature:5.1f}"
     pres_now.value = f"now: {sense.pressure:5.1f}"
@@ -108,6 +116,7 @@ async def read_sensehat():
             await sleep(0.5)
     
 
+#Lopetetaan ohjelma ilmoittamalla se myös SenseHatin ledeillä.
 def quit():
     app.cancel(main)
     sense.clear()
@@ -117,7 +126,7 @@ def quit():
     app.destroy()
 
 
-#Main Program
+#Main GUIZERO Program - Pääohjelmasilmukka käyttöliittymän rakentamiseen/piirtämiseen
 app = App(title = "SenseHat WeatherStation", layout = "grid")
 
 upper_box = Box(app, grid = [0,0,1,3])
@@ -155,5 +164,5 @@ lower_box = Box(app, grid = [0,16,1,2])
 emptyline5 = Text(lower_box, text = "", grid = [0,7])
 quit = PushButton(lower_box, text = "Quit program", width = "fill", grid = [0,1], command = quit)
      
-app.repeat(2000, main)
-app.display()
+app.repeat(2000, main)   #en onnistunut tässä suoraan käynnistämään asynkronista funktiota,
+app.display()            #siksi käytössä on erikseen main-funktio read_sensehatin ajamiseen
