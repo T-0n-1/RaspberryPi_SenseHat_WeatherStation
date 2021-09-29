@@ -2,8 +2,9 @@
 from sense_emu import SenseHat   #Emulated SenseHat
 from guizero import App, Box, Text, TextBox, PushButton   #Guizero for Graphical User Interface
 from asyncio import create_task, run, sleep, wait #Asyncio for asynchronous programming/tasks
-from azure.iot.device import IoTHubDeviceClient   #For interacting with Azure IoTHub
-
+from azure.iot.device import IoTHubDeviceClient, Message   #For interacting with Azure IoTHub
+from datetime import datetime   #For creating a timestamp
+import json   #For working with JSON format
 import auth   #File containing keys for accessing Azure - inside .gitignore
 
 #variables
@@ -77,6 +78,26 @@ async def led(color, value):
                     sense.set_pixel(x, y, rgb)
 
 
+#Lähetetään tiedot Azuren IoTHubiin
+async def send_transmission(temp, pres, humi):
+    timestamp = datetime.now()
+    timestamp = timestamp.strftime("%d.%m.%Y - %H:%M:%S")
+    msg = json.dumps(\
+        {
+         'DeviceID': auth.deviceid,
+         'Temperature': temp,
+         'Temperature_alarmpoint': temp_ap_input.value,
+         'Pressure': pres,
+         'Pressure_alarmpoint': pres_ap_input.value,
+         'Humidity': humi,
+         'Humidity_alarmpoint': humi_ap_input.value,
+         'Timestamp': timestamp
+        }
+        )
+    message = Message(msg)
+    connected_device.send_message(message)
+
+
 #Luetaan arvot SenseHatilta, kirjoitetaan sen hetkinen arvo käyttöliittymään ja
 #ajetaan asynkroninen led funktio arvo versus hälytysarvo vertailun perusteella.
 async def read_sensehat():
@@ -87,6 +108,9 @@ async def read_sensehat():
     temperature_now = float(f"{sense.temperature:5.1f}")
     pressure_now = float(f"{sense.pressure:5.1f}")
     humidity_now = float(f"{sense.humidity:5.1f}")
+    
+    task_message = create_task(send_transmission(temperature_now, pressure_now, humidity_now))
+    await task_message
     
     if temp_ap_input.value == "":
         task_temp = create_task(led(1,0))
@@ -155,6 +179,7 @@ temp_box_label = Text(temp_box, text = "TEMPERATURE", grid = [0,0])
 temp_now = Text(temp_box, text = f"now: {sense.temperature:5.1f}", grid =[0,1], align = "left")
 temp_ap_text = Text(temp_box, text = "Alarmpoint: ", grid = [0,2], align = "left")
 temp_ap_input = TextBox(temp_box, grid = [1,2,1,1], align = "left")
+temp_ap = temp_ap_input.value
 
 emptyline2 = Text(middle_box, text = "", grid = [0,3])
 
