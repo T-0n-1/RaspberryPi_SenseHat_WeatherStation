@@ -20,7 +20,7 @@ async def led(color, value):
         rgb = (255, 0, 0)
         rgb2 = (255, 255, 255)
         i = 0
-        while i < 5:
+        while i < 7:
             if value == 0:
                 for x in range(2):
                     for y in range(8):
@@ -66,9 +66,9 @@ async def led(color, value):
 
 
 async def read_sensehat():
-    temp_now.value = f"{sense.temperature:5.1f}"
-    pres_now.value = f"{sense.pressure:5.1f}"
-    humi_now.value = f"{sense.humidity:5.1f}"
+    temp_now.value = f"now: {sense.temperature:5.1f}"
+    pres_now.value = f"now: {sense.pressure:5.1f}"
+    humi_now.value = f"now: {sense.humidity:5.1f}"
     
     temperature_now = float(f"{sense.temperature:5.1f}")
     pressure_now = float(f"{sense.pressure:5.1f}")
@@ -76,36 +76,36 @@ async def read_sensehat():
     
     if temp_ap_input.value == "":
         task_temp = create_task(led(1,0))
-        await sleep(1.2)
+        await sleep(0.5)
     else:
         if temperature_now < (float(temp_ap_input.value)):
             task_temp = create_task(led(0,0))
-            await sleep(1.2)
+            await sleep(0.5)
         elif temperature_now >= (float(temp_ap_input.value)):
             task_temp = create_task(led(1,0))
-            await sleep(1.2)
+            await sleep(0.5)
             
     if pres_ap_input.value == "":
         task_pres = create_task(led(1,1))
-        await sleep(1.2)
+        await sleep(0.5)
     else:
         if pressure_now < (float(pres_ap_input.value)):
             task_pres = create_task(led(0,1))
-            await sleep(1.2)
+            await sleep(0.5)
         elif pressure_now >= (float(pres_ap_input.value)):
             task_pres = create_task(led(1,1))
-            await sleep(1.2)
+            await sleep(0.5)
     
     if humi_ap_input.value == "":
         task_humi = create_task(led(1,2))
-        await sleep(1.2)
+        await sleep(0.5)
     else:
         if humidity_now < (float(humi_ap_input.value)):
             task_humi = create_task(led(0,2))
-            await sleep(1.2)
+            await sleep(0.5)
         elif humidity_now >= (float(humi_ap_input.value)):
             task_humi = create_task(led(1,2))
-            await sleep(1.2)
+            await sleep(0.5)
     
 
 def quit():
