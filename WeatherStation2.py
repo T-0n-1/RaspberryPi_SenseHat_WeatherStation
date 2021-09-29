@@ -1,10 +1,16 @@
 #imports
-from sense_emu import SenseHat
-from guizero import App, Box, Text, TextBox, PushButton
-from asyncio import create_task, run, sleep, wait
+from sense_emu import SenseHat   #Emulated SenseHat
+from guizero import App, Box, Text, TextBox, PushButton   #Guizero for Graphical User Interface
+from asyncio import create_task, run, sleep, wait #Asyncio for asynchronous programming/tasks
+from azure.iot.device import IoTHubDeviceClient   #For interacting with Azure IoTHub
+
+import auth   #File containing keys for accessing Azure - inside .gitignore
 
 #variables
 sense = SenseHat()
+primary_connection_string = auth.primary_connection_string
+connected_device = IoTHubDeviceClient.create_from_connection_string(primary_connection_string)
+connected_device.connect()
 
 #clear SenseHat's led matrix
 sense.clear()
@@ -118,7 +124,7 @@ async def read_sensehat():
     if sense.stick.get_events():
         app.cancel(main)
         sense.clear()
-        sense.show_message("Program stopped")
+        sense.show_message("Program stopped by stick event")
     
         app.disable()
         app.destroy()
@@ -128,7 +134,7 @@ async def read_sensehat():
 def quit():
     app.cancel(main)
     sense.clear()
-    sense.show_message("Program stopped")
+    sense.show_message("Program stopped by Quit button")
     
     app.disable()
     app.destroy()
