@@ -1,7 +1,7 @@
 #imports
 from sense_emu import SenseHat
 from guizero import App, Box, Text, TextBox, PushButton
-from time import sleep
+from asyncio import create_task, run, sleep, wait
 
 #variables
 sense = SenseHat()
@@ -11,7 +11,11 @@ sense.clear()
         
         
 #Functions
-def led(color, value):
+def main():
+    run(read_sensehat())
+
+
+async def led(color, value):
     if color == 0:
         rgb = (255, 0, 0)
         rgb2 = (255, 255, 255)
@@ -24,7 +28,7 @@ def led(color, value):
                             sense.set_pixel(x, y, rgb)
                         else:
                             sense.set_pixel(x, y, rgb2)
-                sleep(0.2)
+                await sleep(0.2)
             elif value == 1:
                 for x in range(3, 5):
                     for y in range(8):
@@ -32,7 +36,7 @@ def led(color, value):
                             sense.set_pixel(x, y, rgb)
                         else:
                             sense.set_pixel(x, y, rgb2)
-                sleep(0.2)
+                await sleep(0.2)
             elif value == 2:
                 for x in range(6, 8):
                     for y in range(8):
@@ -40,7 +44,7 @@ def led(color, value):
                             sense.set_pixel(x, y, rgb)
                         else:
                             sense.set_pixel(x, y, rgb2)
-                sleep(0.2)
+                await sleep(0.2)
             i += 1
 
     
@@ -61,7 +65,7 @@ def led(color, value):
                     sense.set_pixel(x, y, rgb)
 
 
-def read_sensehat():
+async def read_sensehat():
     temp_now.value = f"{sense.temperature:5.1f}"
     pres_now.value = f"{sense.pressure:5.1f}"
     humi_now.value = f"{sense.humidity:5.1f}"
@@ -71,33 +75,41 @@ def read_sensehat():
     humidity_now = float(f"{sense.humidity:5.1f}")
     
     if temp_ap_input.value == "":
-        led(1,0)
+        task_temp = create_task(led(1,0))
+        await sleep(1.2)
     else:
         if temperature_now < (float(temp_ap_input.value)):
-            led(0,0)
+            task_temp = create_task(led(0,0))
+            await sleep(1.2)
         elif temperature_now >= (float(temp_ap_input.value)):
-            led(1,0)
-    
+            task_temp = create_task(led(1,0))
+            await sleep(1.2)
+            
     if pres_ap_input.value == "":
-        led(1,1)
+        task_pres = create_task(led(1,1))
+        await sleep(1.2)
     else:
         if pressure_now < (float(pres_ap_input.value)):
-            led(0,1)
+            task_pres = create_task(led(0,1))
+            await sleep(1.2)
         elif pressure_now >= (float(pres_ap_input.value)):
-            led(1,1)
+            task_pres = create_task(led(1,1))
+            await sleep(1.2)
     
     if humi_ap_input.value == "":
-        led(1,2)
+        task_humi = create_task(led(1,2))
+        await sleep(1.2)
     else:
         if humidity_now < (float(humi_ap_input.value)):
-            led(0,2)
+            task_humi = create_task(led(0,2))
+            await sleep(1.2)
         elif humidity_now >= (float(humi_ap_input.value)):
-            led(1,2)
-        led(2,2)
+            task_humi = create_task(led(1,2))
+            await sleep(1.2)
     
 
 def quit():
-    app.cancel(read_sensehat)
+    app.cancel(main)
     sense.clear()
     sense.show_message("Program stopped")
     
@@ -143,5 +155,5 @@ lower_box = Box(app, grid = [0,16,1,2])
 emptyline5 = Text(lower_box, text = "", grid = [0,7])
 quit = PushButton(lower_box, text = "Quit program", width = "fill", grid = [0,1], command = quit)
      
-app.repeat(2000, read_sensehat)
+app.repeat(2000, main)
 app.display()
