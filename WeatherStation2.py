@@ -4,6 +4,7 @@ from guizero import App, Box, Text, TextBox, PushButton   #Guizero for Graphical
 from asyncio import create_task, run, sleep, wait #Asyncio for asynchronous programming/tasks
 from azure.iot.device import IoTHubDeviceClient, Message   #For interacting with Azure IoTHub
 from datetime import datetime   #For creating a timestamp
+from time import time   #For checking duration between transmissions
 import json   #For working with JSON format
 import auth   #File containing keys for accessing Azure - inside .gitignore
 
@@ -15,6 +16,11 @@ connected_device = IoTHubDeviceClient.create_from_connection_string(primary_conn
 #For connecting to Azure IotHub
 connected_device.connect()
 
+#For defining time_then variable for the first time
+global time_now, time_then
+time_then = time()
+time_now = time()
+
 #clear SenseHat's led matrix
 sense.clear()
         
@@ -22,7 +28,13 @@ sense.clear()
 #Functions
 #For starting asynchronous function read_sensehat
 def main():
-    run(read_sensehat())
+    global time_now, time_then
+    time_now = time()
+    if (time_now - time_then) > 60:   #comparison to make transmissions send if duration
+        time_then = time_now          #between now and then is more than 60 seconds
+        run(read_sensehat(1))
+    else:
+        run(read_sensehat(0))
 
 
 #Asynchronous function for blinking color red and white leds if the value goes under the alarm
@@ -115,7 +127,7 @@ async def send_transmission(temp, pres, humi):
 
 #Reading SenseHat for values and writing them on the GUI. Running asynchronous led function
 #based on comparison of value versus alarmpoint. Running asynchronous send_transmission function
-async def read_sensehat():
+async def read_sensehat(time):
     temp_now.value = f"now: {sense.temperature:5.1f}"
     pres_now.value = f"now: {sense.pressure:5.1f}"
     humi_now.value = f"now: {sense.humidity:5.1f}"
@@ -124,8 +136,11 @@ async def read_sensehat():
     pressure_now = float(f"{sense.pressure:5.1f}")
     humidity_now = float(f"{sense.humidity:5.1f}")
     
-    task_message = create_task(send_transmission(temperature_now, pressure_now, humidity_now))
-    await task_message
+    if time == 1:
+        task_message = create_task(send_transmission(temperature_now, pressure_now, humidity_now))
+        await task_message
+    else:
+        pass
     
     if temp_ap_input.value == "":
         task_temp = create_task(led(1,0))
