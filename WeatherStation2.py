@@ -7,10 +7,12 @@ from datetime import datetime   #For creating a timestamp
 import json   #For working with JSON format
 import auth   #File containing keys for accessing Azure - inside .gitignore
 
-#variables
+#Variables
 sense = SenseHat()
 primary_connection_string = auth.primary_connection_string
 connected_device = IoTHubDeviceClient.create_from_connection_string(primary_connection_string)
+
+#For connecting to Azure IotHub
 connected_device.connect()
 
 #clear SenseHat's led matrix
@@ -18,23 +20,22 @@ sense.clear()
         
         
 #Functions
-#Käynnistetään asynkroninen funktio read_sensehat
+#For starting asynchronous function read_sensehat
 def main():
     run(read_sensehat())
 
 
-#Asynkroninen funktio, jolla vilkutetaan SenseHatin ledejä mikäli arvo tippuu annetun
-#hälytysarvon alle. Ensimmäiset kaksi saraketta on varattu lämpötilalle, seuraavat kaksi
-#ilman paineelle ja viimeiset kaksi ilmankosteudelle. Vihreä väri kertoo arvon olevan
-#yli hälytysarvon ja puna-valkoinen vilkutus arvon menneen hälytysarvon alle.
-#Taskeilla mahdollistettu asynkroninen ledien vilkutus.
+#Asynchronous function for blinking color red and white leds if the value goes under the alarm
+#point. First two led columns reserved for temperature, second for pressure and third for
+#humidity plus empty column between each. Green light means that value is over the given
+#alarmpoint. Used tasks to have asynchronous led blinking.
 async def led(color, value):
-    if color == 0:
+    if color == 0:   #color 0 means red/white
         rgb = (255, 0, 0)
         rgb2 = (255, 255, 255)
         i = 0
         while i < 7:
-            if value == 0:
+            if value == 0:   #value 0 means temperature
                 for x in range(2):
                     for y in range(8):
                         if i % 2 == 0:
@@ -42,7 +43,7 @@ async def led(color, value):
                         else:
                             sense.set_pixel(x, y, rgb2)
                 await sleep(0.2)
-            elif value == 1:
+            elif value == 1:   #value 1 means pressure
                 for x in range(3, 5):
                     for y in range(8):
                         if i % 2 == 0:
@@ -50,7 +51,7 @@ async def led(color, value):
                         else:
                             sense.set_pixel(x, y, rgb2)
                 await sleep(0.2)
-            elif value == 2:
+            elif value == 2:   #value 2 means humidity
                 for x in range(6, 8):
                     for y in range(8):
                         if i % 2 == 0:
@@ -61,11 +62,11 @@ async def led(color, value):
             i += 1
 
     
-    elif color == 1:
+    elif color == 1:   #color 1 means green
         rgb = (0, 255, 0)
     
         if value == 0:
-            for x in range(2):
+            for x in range(2):   #using here and above two for-loops to build x and y coordinates
                 for y in range(8):
                     sense.set_pixel(x, y, rgb)        
         elif value == 1:
@@ -78,7 +79,7 @@ async def led(color, value):
                     sense.set_pixel(x, y, rgb)
 
 
-#Lähetetään tiedot Azuren IoTHubiin
+#For sending information to IoTHub of Azure
 async def send_transmission(temp, pres, humi):
     if temp_ap_input.value != "":
         temp_ap = float(temp_ap_input.value)
@@ -105,15 +106,15 @@ async def send_transmission(temp, pres, humi):
          'Pressure_alarmpoint': pres_ap,
          'Humidity': humi,
          'Humidity_alarmpoint': humi_ap,
-         'Timestamp': timestamp
+         'Time_stamp': timestamp
         }
         )
     message = Message(msg)
     connected_device.send_message(message)
 
 
-#Luetaan arvot SenseHatilta, kirjoitetaan sen hetkinen arvo käyttöliittymään ja
-#ajetaan asynkroninen led funktio arvo versus hälytysarvo vertailun perusteella.
+#Reading SenseHat for values and writing them on the GUI. Running asynchronous led function
+#based on comparison of value versus alarmpoint. Running asynchronous send_transmission function
 async def read_sensehat():
     temp_now.value = f"now: {sense.temperature:5.1f}"
     pres_now.value = f"now: {sense.pressure:5.1f}"
@@ -169,7 +170,7 @@ async def read_sensehat():
         connected_device.disconnect()
 
 
-#Lopetetaan ohjelma ilmoittamalla se myös SenseHatin ledeillä.
+#For quitting program and show message of program stop with sensehat leds
 def quit():
     app.cancel(main)
     sense.clear()
@@ -180,7 +181,7 @@ def quit():
     connected_device.disconnect()
 
 
-#Main GUIZERO Program - Pääohjelmasilmukka käyttöliittymän rakentamiseen/piirtämiseen
+#Main GUIZERO Program - Eventloop
 app = App(title = "SenseHat WeatherStation", layout = "grid")
 
 upper_box = Box(app, grid = [0,0,1,3])
@@ -218,5 +219,5 @@ lower_box = Box(app, grid = [0,16,1,2])
 emptyline5 = Text(lower_box, text = "", grid = [0,7])
 quit = PushButton(lower_box, text = "Quit program", width = "fill", grid = [0,1], command = quit)
      
-app.repeat(2000, main)   #en onnistunut tässä suoraan käynnistämään asynkronista funktiota,
-app.display()            #siksi käytössä on erikseen main-funktio read_sensehatin ajamiseen
+app.repeat(2000, main)   #Had to use main function because was not able to run asynchronous 
+app.display()            #function inside app.repeat.
