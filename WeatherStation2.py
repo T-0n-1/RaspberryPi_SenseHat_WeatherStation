@@ -122,6 +122,7 @@ async def send_transmission(temp, pres, humi):
         }
         )
     message = Message(msg)
+    sense.show_message("Sending data to SQLdatabase in Azure", scroll_speed=0.08)
     connected_device.send_message(message)
 
 
